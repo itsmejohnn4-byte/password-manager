@@ -3,860 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureVault - Password Manager</title>
-    <meta name="theme-color" content="#3498db">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SecureVault">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%233498db'/><text x='50' y='55' font-size='50' text-anchor='middle' fill='white'>🔐</text></svg>">
-    <link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;SecureVault&quot;,&quot;short_name&quot;:&quot;SecureVault&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%233498db'/><text x='50' y='55' font-size='50' text-anchor='middle' fill='white'>🔐</text></svg>&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}],&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;#667eea&quot;,&quot;theme_color&quot;:&quot;#3498db&quot;}">
+    <title>Secure Password Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Inter', sans-serif;
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+        .icon-container {
+            width: 64px;
+            height: 64px;
         }
-
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 300;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-            padding: 30px;
-        }
-
-        .sidebar {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            height: fit-content;
-        }
-
-        .password-list {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .add-password-form {
-            background: #f8f9fa;
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        .password-input-group {
-            position: relative;
-        }
-
-        .generate-btn {
+        .has-password::after {
+            content: '';
             position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: background 0.3s ease;
+            top: 6px;
+            right: 6px;
+            width: 10px;
+            height: 10px;
+            background-color: #22c55e; /* green-500 */
+            border-radius: 50%;
+            border: 2px solid #1f2937; /* gray-800 */
         }
-
-        .generate-btn:hover {
-            background: #2980b9;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .password-item {
-            background: white;
-            border: 2px solid #f1f2f6;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .password-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border-color: #3498db;
-        }
-
-        .password-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .site-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: white;
-            font-size: 18px;
-        }
-
-        .password-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .detail-item {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-        }
-
-        .detail-label {
-            font-size: 12px;
-            color: #6c757d;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .detail-value {
-            font-size: 14px;
-            color: #2c3e50;
-            word-break: break-all;
-        }
-
-        .password-value {
-            filter: blur(4px);
-            transition: filter 0.3s ease;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .password-value:hover, .password-value.revealed {
-            filter: none;
-        }
-
-        .password-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .action-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .copy-btn {
-            background: #27ae60;
-            color: white;
-        }
-
-        .edit-btn {
-            background: #f39c12;
-            color: white;
-        }
-
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-
-        .stats {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2em;
-            font-weight: bold;
-            color: #3498db;
-        }
-
-        .stat-label {
-            color: #6c757d;
-            margin-top: 5px;
-        }
-
-        .strength-indicator {
-            display: flex;
-            gap: 4px;
-            margin-top: 8px;
-        }
-
-        .strength-bar {
-            height: 4px;
-            flex: 1;
-            border-radius: 2px;
-            background: #e9ecef;
-        }
-
-        .strength-bar.weak { background: #e74c3c; }
-        .strength-bar.medium { background: #f39c12; }
-        .strength-bar.strong { background: #27ae60; }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #27ae60;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+        .manage-btn {
             display: none;
-            justify-content: center;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            background-color: rgba(239, 68, 68, 0.8); /* red-500 with opacity */
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
             align-items: center;
-            z-index: 1000;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
-
-        .modal-content {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            width: 90%;
-            max-width: 500px;
-            max-height: 80vh;
-            overflow-y: auto;
+        .manage-btn:hover {
+            background-color: rgba(220, 38, 38, 1); /* red-600 */
         }
-
-        .modal.show {
+        .edit-mode .manage-btn {
             display: flex;
         }
-
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-                gap: 20px;
-                padding: 20px;
-            }
-            
-            .password-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-        }
-
-        /* Site specific colors */
-        .facebook { background: #1877f2; }
-        .instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .twitter { background: #1da1f2; }
-        .linkedin { background: #0077b5; }
-        .youtube { background: #ff0000; }
-        .tiktok { background: #000000; }
-        .snapchat { background: #fffc00; color: black; }
-        .pinterest { background: #bd081c; }
-        .reddit { background: #ff4500; }
-        .discord { background: #5865f2; }
-        .twitch { background: #9146ff; }
-        .spotify { background: #1db954; }
-        .netflix { background: #e50914; }
-        .amazon { background: #ff9900; }
-        .google { background: #4285f4; }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🔐 SecureVault</h1>
-            <p>Your personal password manager - Keep your digital life secure</p>
-        </div>
+<body class="bg-gray-900 text-white selection:bg-indigo-500 selection:text-white">
 
-        <div class="main-content">
-            <div class="sidebar">
-                <div class="stats">
-                    <div class="stat-number" id="passwordCount">0</div>
-                    <div class="stat-label">Stored Passwords</div>
-                </div>
-
-                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search passwords...">
-
-                <div class="add-password-form">
-                    <h3 style="margin-bottom: 20px; color: #2c3e50;">Add New Password</h3>
-                    
-                    <div class="form-group">
-                        <label for="siteName">Website/App Name</label>
-                        <select id="siteName">
-                            <option value="">Select or type custom...</option>
-                            <option value="Facebook">Facebook</option>
-                            <option value="Instagram">Instagram</option>
-                            <option value="Twitter">Twitter</option>
-                            <option value="LinkedIn">LinkedIn</option>
-                            <option value="YouTube">YouTube</option>
-                            <option value="TikTok">TikTok</option>
-                            <option value="Snapchat">Snapchat</option>
-                            <option value="Pinterest">Pinterest</option>
-                            <option value="Reddit">Reddit</option>
-                            <option value="Discord">Discord</option>
-                            <option value="Twitch">Twitch</option>
-                            <option value="Spotify">Spotify</option>
-                            <option value="Netflix">Netflix</option>
-                            <option value="Amazon">Amazon</option>
-                            <option value="Google">Google</option>
-                            <option value="custom">Custom...</option>
-                        </select>
-                        <input type="text" id="customSiteName" placeholder="Enter custom site name" style="display: none; margin-top: 10px;">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="username">Username/Email</label>
-                        <input type="text" id="username" placeholder="Enter username or email">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="password-input-group">
-                            <input type="password" id="password" placeholder="Enter or generate password">
-                            <button class="generate-btn" onclick="generatePassword()">Generate</button>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="url">Website URL (optional)</label>
-                        <input type="url" id="url" placeholder="https://example.com">
-                    </div>
-
-                    <button class="btn btn-primary" onclick="addPassword()">
-                        ➕ Add Password
+    <!-- Master Password Login Overlay -->
+    <div id="login-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-95 flex items-center justify-center z-50 transition-opacity duration-300">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-gray-700">
+            <div class="text-center mb-6">
+                <i class="fas fa-shield-halved text-5xl text-indigo-400"></i>
+                <h2 class="text-3xl font-bold mt-4">Master Login</h2>
+                <p id="login-prompt" class="text-gray-400 mt-2">Enter your master password to unlock.</p>
+            </div>
+            <form id="login-form">
+                <div class="relative">
+                    <input type="password" id="master-password" placeholder="Master Password" class="w-full bg-gray-700 text-white p-4 rounded-lg border border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" required>
+                    <button type="button" id="toggle-password-visibility" class="absolute inset-y-0 right-0 px-4 text-gray-400 hover:text-white">
+                        <i class="fas fa-eye"></i>
                     </button>
                 </div>
-            </div>
-
-            <div class="password-list">
-                <h2 style="margin-bottom: 25px; color: #2c3e50;">Your Passwords</h2>
-                <div id="passwordContainer">
-                    <!-- Passwords will be displayed here -->
-                </div>
-            </div>
+                <p id="login-error" class="text-red-400 text-sm mt-2 h-5"></p>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg mt-4 transition-transform transform hover:scale-105">Unlock</button>
+            </form>
         </div>
     </div>
 
-    <!-- Edit Modal -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 20px; color: #2c3e50;">Edit Password</h3>
-            <div class="form-group">
-                <label for="editSiteName">Website/App Name</label>
-                <input type="text" id="editSiteName">
-            </div>
-            <div class="form-group">
-                <label for="editUsername">Username/Email</label>
-                <input type="text" id="editUsername">
-            </div>
-            <div class="form-group">
-                <label for="editPassword">Password</label>
-                <div class="password-input-group">
-                    <input type="password" id="editPassword">
-                    <button class="generate-btn" onclick="generateEditPassword()">Generate</button>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="editUrl">Website URL</label>
-                <input type="url" id="editUrl">
-            </div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // Password storage array
-        let passwords = [];
-        let editingIndex = -1;
-
-        // Site color mapping
-        const siteColors = {
-            'facebook': 'facebook',
-            'instagram': 'instagram', 
-            'twitter': 'twitter',
-            'linkedin': 'linkedin',
-            'youtube': 'youtube',
-            'tiktok': 'tiktok',
-            'snapchat': 'snapchat',
-            'pinterest': 'pinterest',
-            'reddit': 'reddit',
-            'discord': 'discord',
-            'twitch': 'twitch',
-            'spotify': 'spotify',
-            'netflix': 'netflix',
-            'amazon': 'amazon',
-            'google': 'google'
-        };
-
-        // Initialize app with some default passwords
-        function initializeApp() {
-            const defaultPasswords = [
-                {
-                    siteName: 'Facebook',
-                    username: 'your.email@example.com',
-                    password: 'SecureFB2024!',
-                    url: 'https://facebook.com',
-                    dateAdded: new Date().toISOString()
-                },
-                {
-                    siteName: 'Instagram',
-                    username: 'your_username',
-                    password: 'InstaSecure#2024',
-                    url: 'https://instagram.com',
-                    dateAdded: new Date().toISOString()
-                },
-                {
-                    siteName: 'Twitter',
-                    username: 'your.email@example.com',
-                    password: 'TwitterSafe$2024',
-                    url: 'https://twitter.com',
-                    dateAdded: new Date().toISOString()
-                }
-            ];
-
-            passwords = [...defaultPasswords];
-            renderPasswords();
-            updateStats();
-        }
-
-        // Handle site selection
-        document.getElementById('siteName').addEventListener('change', function() {
-            const customInput = document.getElementById('customSiteName');
-            if (this.value === 'custom') {
-                customInput.style.display = 'block';
-                customInput.focus();
-            } else {
-                customInput.style.display = 'none';
-            }
-        });
-
-        // Generate secure password
-        function generatePassword() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-            let password = '';
-            
-            // Ensure at least one of each type
-            password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
-            password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
-            password += '0123456789'[Math.floor(Math.random() * 10)];
-            password += '!@#$%^&*'[Math.floor(Math.random() * 8)];
-            
-            // Fill the rest
-            for (let i = 4; i < 16; i++) {
-                password += chars[Math.floor(Math.random() * chars.length)];
-            }
-            
-            // Shuffle the password
-            password = password.split('').sort(() => Math.random() - 0.5).join('');
-            
-            document.getElementById('password').value = password;
-            showToast('Strong password generated!', 'success');
-        }
-
-        function generateEditPassword() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-            let password = '';
-            
-            password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
-            password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
-            password += '0123456789'[Math.floor(Math.random() * 10)];
-            password += '!@#$%^&*'[Math.floor(Math.random() * 8)];
-            
-            for (let i = 4; i < 16; i++) {
-                password += chars[Math.floor(Math.random() * chars.length)];
-            }
-            
-            password = password.split('').sort(() => Math.random() - 0.5).join('');
-            
-            document.getElementById('editPassword').value = password;
-            showToast('Strong password generated!', 'success');
-        }
-
-        // Add new password
-        function addPassword() {
-            const siteSelect = document.getElementById('siteName');
-            const customSite = document.getElementById('customSiteName');
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const url = document.getElementById('url').value;
-
-            let siteName = siteSelect.value === 'custom' ? customSite.value : siteSelect.value;
-
-            if (!siteName || !username || !password) {
-                showToast('Please fill in all required fields!', 'error');
-                return;
-            }
-
-            const newPassword = {
-                siteName,
-                username,
-                password,
-                url,
-                dateAdded: new Date().toISOString()
-            };
-
-            passwords.push(newPassword);
-            renderPasswords();
-            updateStats();
-            clearForm();
-            showToast('Password added successfully!', 'success');
-        }
-
-        // Clear form after adding
-        function clearForm() {
-            document.getElementById('siteName').value = '';
-            document.getElementById('customSiteName').value = '';
-            document.getElementById('customSiteName').style.display = 'none';
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('url').value = '';
-        }
-
-        // Render passwords
-        function renderPasswords() {
-            const container = document.getElementById('passwordContainer');
-            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
-            
-            const filteredPasswords = passwords.filter(p => 
-                p.siteName.toLowerCase().includes(searchTerm) ||
-                p.username.toLowerCase().includes(searchTerm)
-            );
-
-            if (filteredPasswords.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #6c757d; margin-top: 50px;">No passwords found. Add your first password!</p>';
-                return;
-            }
-
-            container.innerHTML = filteredPasswords.map((pass, index) => {
-                const originalIndex = passwords.indexOf(pass);
-                const siteKey = pass.siteName.toLowerCase();
-                const colorClass = siteColors[siteKey] || 'btn-primary';
-                const strength = getPasswordStrength(pass.password);
-                
-                return `
-                    <div class="password-item">
-                        <div class="password-header">
-                            <div class="site-icon ${colorClass}">
-                                ${pass.siteName[0].toUpperCase()}
-                            </div>
-                            <div>
-                                <h3 style="color: #2c3e50; margin-bottom: 4px;">${pass.siteName}</h3>
-                                <small style="color: #6c757d;">Added ${new Date(pass.dateAdded).toLocaleDateString()}</small>
-                            </div>
-                        </div>
-                        
-                        <div class="password-details">
-                            <div class="detail-item">
-                                <div class="detail-label">Username/Email</div>
-                                <div class="detail-value">${pass.username}</div>
-                            </div>
-                            
-                            <div class="detail-item">
-                                <div class="detail-label">Password</div>
-                                <div class="detail-value">
-                                    <div class="password-value" onclick="togglePasswordVisibility(this)">
-                                        ${pass.password}
-                                    </div>
-                                    <div class="strength-indicator">
-                                        ${getStrengthBars(strength)}
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            ${pass.url ? `
-                            <div class="detail-item" style="grid-column: span 2;">
-                                <div class="detail-label">Website URL</div>
-                                <div class="detail-value">
-                                    <a href="${pass.url}" target="_blank" style="color: #3498db; text-decoration: none;">
-                                        ${pass.url}
-                                    </a>
-                                </div>
-                            </div>
-                            ` : ''}
-                        </div>
-                        
-                        <div class="password-actions">
-                            <button class="action-btn copy-btn" onclick="copyPassword('${pass.password}')">
-                                📋 Copy Password
-                            </button>
-                            <button class="action-btn copy-btn" onclick="copyUsername('${pass.username}')">
-                                👤 Copy Username
-                            </button>
-                            <button class="action-btn edit-btn" onclick="editPassword(${originalIndex})">
-                                ✏️ Edit
-                            </button>
-                            <button class="action-btn delete-btn" onclick="deletePassword(${originalIndex})">
-                                🗑️ Delete
-                            </button>
-                        </div>
+    <!-- Main Application Container -->
+    <div id="app-container" class="hidden">
+        <header class="bg-gray-800/80 backdrop-blur-sm sticky top-0 z-40 border-b border-gray-700">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <i class="fas fa-shield-halved text-2xl text-indigo-400"></i>
+                        <span class="font-bold text-xl ml-3">Password Manager</span>
                     </div>
-                `;
-            }).join('');
-        }
+                    <div class="flex items-center gap-4">
+                        <button id="manage-toggle-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center gap-2">
+                            <i class="fas fa-pencil-alt"></i>
+                            <span>Manage</span>
+                        </button>
+                        <button id="logout-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-transform transform hover:scale-105 flex items-center gap-2">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </header>
 
-        // Password strength calculation
-        function getPasswordStrength(password) {
-            let score = 0;
-            if (password.length >= 8) score++;
-            if (password.length >= 12) score++;
-            if (/[a-z]/.test(password)) score++;
-            if (/[A-Z]/.test(password)) score++;
-            if (/[0-9]/.test(password)) score++;
-            if (/[^A-Za-z0-9]/.test(password)) score++;
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8 relative">
+             <div id="edit-mode-controls" class="hidden mb-6 text-center">
+                <button id="show-hidden-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition">
+                    Manage Hidden Services
+                </button>
+            </div>
+            <div id="services-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-6">
+                <!-- Service items will be injected here by JavaScript -->
+            </div>
+            <button id="add-service-fab" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg transition-transform transform hover:scale-110">
+                <i class="fas fa-plus text-2xl"></i>
+            </button>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="password-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300 hidden">
+        <!-- Password Modal Content -->
+    </div>
+    <div id="add-service-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300 hidden">
+        <!-- Add Service Modal Content -->
+    </div>
+    <div id="hidden-services-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300 hidden">
+        <div class="bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-lg border border-gray-700 m-4">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Hidden Services</h3>
+                <button id="close-hidden-modal" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div id="hidden-services-list" class="space-y-3 max-h-96 overflow-y-auto">
+                <!-- Hidden services will be listed here -->
+            </div>
+        </div>
+    </div>
+    <div id="confirm-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 transition-opacity duration-300 hidden">
+        <div class="bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-sm border border-gray-700 m-4">
+            <h3 id="confirm-title" class="text-xl font-bold mb-4 text-center">Are you sure?</h3>
+            <p id="confirm-message" class="text-gray-300 mb-6 text-center">This action cannot be undone.</p>
+            <div class="flex gap-4">
+                <button id="confirm-cancel" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
+                <button id="confirm-proceed" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg">Proceed</button>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-5 rounded-lg shadow-lg opacity-0 translate-y-10 transition-all duration-300">
+        <p id="toast-message"></p>
+    </div>
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Configuration and Initialization ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-password-manager';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DOM Element References ---
+        const loginOverlay = document.getElementById('login-overlay');
+        const loginForm = document.getElementById('login-form');
+        const masterPasswordInput = document.getElementById('master-password');
+        const loginError = document.getElementById('login-error');
+        const loginPrompt = document.getElementById('login-prompt');
+        const togglePasswordVisibility = document.getElementById('toggle-password-visibility');
+        const appContainer = document.getElementById('app-container');
+        const logoutButton = document.getElementById('logout-button');
+        const servicesGrid = document.getElementById('services-grid');
+        const passwordModal = document.getElementById('password-modal');
+        const addServiceModal = document.getElementById('add-service-modal');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        const addServiceFab = document.getElementById('add-service-fab');
+        
+        // Edit Mode Elements
+        const manageToggleBtn = document.getElementById('manage-toggle-btn');
+        const editModeControls = document.getElementById('edit-mode-controls');
+        const showHiddenBtn = document.getElementById('show-hidden-btn');
+        const hiddenServicesModal = document.getElementById('hidden-services-modal');
+        const closeHiddenModal = document.getElementById('close-hidden-modal');
+        const hiddenServicesList = document.getElementById('hidden-services-list');
+        const confirmModal = document.getElementById('confirm-modal');
+
+
+        // --- Application State ---
+        let userId = null;
+        let masterPasswordHash = null;
+        let unsubscribePasswords = null;
+        let customServices = [];
+        let hiddenServices = [];
+        let allServices = [];
+        let isEditMode = false;
+        let confirmCallback = null;
+
+        // --- Pre-defined Services (Base List) ---
+        const predefinedServices = [
+            { name: 'Google', icon: 'fab fa-google', color: 'text-red-500' }, { name: 'Facebook', icon: 'fab fa-facebook', color: 'text-blue-600' }, { name: 'Twitter', icon: 'fab fa-twitter', color: 'text-sky-500' }, { name: 'Instagram', icon: 'fab fa-instagram', color: 'text-pink-500' }, { name: 'LinkedIn', icon: 'fab fa-linkedin', color: 'text-blue-700' }, { name: 'Reddit', icon: 'fab fa-reddit-alien', color: 'text-orange-500' }, { name: 'Pinterest', icon: 'fab fa-pinterest', color: 'text-red-700' }, { name: 'TikTok', icon: 'fab fa-tiktok', color: 'text-gray-300' }, { name: 'GitHub', icon: 'fab fa-github', color: 'text-gray-300' }, { name: 'Discord', icon: 'fab fa-discord', color: 'text-indigo-500' }, { name: 'Slack', icon: 'fab fa-slack', color: 'text-purple-500' }, { name: 'Microsoft', icon: 'fab fa-microsoft', color: 'text-blue-500' }, { name: 'Netflix', icon: 'fas fa-film', color: 'text-red-600' }, { name: 'YouTube', icon: 'fab fa-youtube', color: 'text-red-600' }, { name: 'Spotify', icon: 'fab fa-spotify', color: 'text-green-500' }, { name: 'Twitch', icon: 'fab fa-twitch', color: 'text-purple-600' }, { name: 'Disney+', icon: 'fas fa-wand-sparkles', color: 'text-blue-900' }, { name: 'Prime Video', icon: 'fas fa-video', color: 'text-sky-400' }, { name: 'Amazon', icon: 'fab fa-amazon', color: 'text-yellow-500' }, { name: 'Apple', icon: 'fab fa-apple', color: 'text-gray-400' }, { name: 'PayPal', icon: 'fab fa-paypal', color: 'text-blue-800' }, { name: 'Generic', icon: 'fas fa-key', color: 'text-gray-500' }
+        ];
+
+        // --- Initialize Modals ---
+        function initModals() {
+            passwordModal.innerHTML = `
+                <div class="bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700 m-4">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center">
+                            <div id="modal-icon-container" class="icon-container flex items-center justify-center text-3xl"></div>
+                            <h3 id="modal-title" class="text-2xl font-bold ml-4">Manage Password</h3>
+                        </div>
+                        <button class="close-modal text-gray-400 hover:text-white text-2xl">&times;</button>
+                    </div>
+                    <form id="password-form">
+                        <input type="hidden" id="service-name">
+                        <div class="mb-4">
+                            <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Username or Email</label>
+                            <div class="relative"><input type="text" id="username" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-indigo-500" required><button type="button" class="copy-btn absolute inset-y-0 right-0 px-3 text-gray-400 hover:text-indigo-400" data-target="username"><i class="fas fa-copy"></i></button></div>
+                        </div>
+                        <div class="mb-6">
+                            <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                            <div class="relative"><input type="password" id="password" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-indigo-500" required><button type="button" class="toggle-modal-password-visibility absolute inset-y-0 right-10 px-3 text-gray-400 hover:text-white"><i class="fas fa-eye"></i></button><button type="button" class="copy-btn absolute inset-y-0 right-0 px-3 text-gray-400 hover:text-indigo-400" data-target="password"><i class="fas fa-copy"></i></button></div>
+                        </div>
+                        <div class="flex items-center gap-4 mb-6"><button type="button" id="generate-password" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition flex items-center justify-center gap-2"><i class="fas fa-key"></i><span>Generate Strong Password</span></button></div>
+                        <div class="flex flex-col sm:flex-row gap-4"><button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Save</button><button type="button" id="delete-password" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 hidden">Delete</button></div>
+                    </form>
+                </div>`;
+
+            addServiceModal.innerHTML = `
+                <div class="bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700 m-4">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-bold">Add Custom Service</h3>
+                        <button class="close-modal text-gray-400 hover:text-white text-2xl">&times;</button>
+                    </div>
+                    <form id="add-service-form">
+                        <div class="mb-4"><label for="new-service-name" class="block text-sm font-medium text-gray-300 mb-2">Service Name</label><input type="text" id="new-service-name" placeholder="e.g., My Awesome App" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-indigo-500" required></div>
+                        <div class="mb-4"><label for="new-service-icon" class="block text-sm font-medium text-gray-300 mb-2">Font Awesome Icon Class</label><input type="text" id="new-service-icon" placeholder="e.g., fas fa-rocket" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-indigo-500" required><p class="text-xs text-gray-400 mt-1">Find free icons at <a href="https://fontawesome.com/search?m=free" target="_blank" class="text-indigo-400 hover:underline">fontawesome.com</a>.</p></div>
+                        <div class="mb-6"><label for="new-service-color" class="block text-sm font-medium text-gray-300 mb-2">Tailwind Color Class</label><input type="text" id="new-service-color" placeholder="e.g., text-cyan-500" class="w-full bg-gray-700 text-white p-3 rounded-lg border border-gray-600 focus:ring-2 focus:ring-indigo-500" required></div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105">Add Service</button>
+                    </form>
+                </div>`;
             
-            if (score <= 2) return 'weak';
-            if (score <= 4) return 'medium';
-            return 'strong';
+            // Re-bind event listeners for dynamically added content
+            document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', (e) => e.target.closest('.fixed').classList.add('hidden')));
+            // Add other listeners for password modal etc. here...
+        }
+        initModals();
+
+
+        // --- Utility Functions ---
+        async function hashPassword(password) {
+            const msgUint8 = new TextEncoder().encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        function getStrengthBars(strength) {
-            const bars = ['', '', ''];
-            if (strength === 'weak') {
-                bars[0] = 'weak';
-            } else if (strength === 'medium') {
-                bars[0] = 'medium';
-                bars[1] = 'medium';
-            } else {
-                bars[0] = 'strong';
-                bars[1] = 'strong';
-                bars[2] = 'strong';
-            }
-            
-            return bars.map(bar => `<div class="strength-bar ${bar}"></div>`).join('');
-        }
-
-        // Toggle password visibility
-        function togglePasswordVisibility(element) {
-            element.classList.toggle('revealed');
-        }
-
-        // Copy functions
-        function copyPassword(password) {
-            navigator.clipboard.writeText(password).then(() => {
-                showToast('Password copied to clipboard!', 'success');
-            });
-        }
-
-        function copyUsername(username) {
-            navigator.clipboard.writeText(username).then(() => {
-                showToast('Username copied to clipboard!', 'success');
-            });
-        }
-
-        // Edit password
-        function editPassword(index) {
-            editingIndex = index;
-            const password = passwords[index];
-            
-            document.getElementById('editSiteName').value = password.siteName;
-            document.getElementById('editUsername').value = password.username;
-            document.getElementById('editPassword').value = password.password;
-            document.getElementById('editUrl').value = password.url || '';
-            
-            document.getElementById('editModal').classList.add('show');
-        }
-
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('show');
-            editingIndex = -1;
-        }
-
-        function saveEdit() {
-            const siteName = document.getElementById('editSiteName').value;
-            const username = document.getElementById('editUsername').value;
-            const password = document.getElementById('editPassword').value;
-            const url = document.getElementById('editUrl').value;
-
-            if (!siteName || !username || !password) {
-                showToast('Please fill in all required fields!', 'error');
-                return;
-            }
-
-            passwords[editingIndex] = {
-                ...passwords[editingIndex],
-                siteName,
-                username,
-                password,
-                url
-            };
-
-            renderPasswords();
-            closeEditModal();
-            showToast('Password updated successfully!', 'success');
-        }
-
-        // Delete password
-        function deletePassword(index) {
-            if (confirm('Are you sure you want to delete this password?')) {
-                passwords.splice(index, 1);
-                renderPasswords();
-                updateStats();
-                showToast('Password deleted successfully!', 'success');
-            }
-        }
-
-        // Update statistics
-        function updateStats() {
-            document.getElementById('passwordCount').textContent = passwords.length;
-        }
-
-        // Search functionality
-        document.getElementById('searchBox').addEventListener('input', renderPasswords);
-
-        // Show toast notifications
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.background = type === 'error' ? '#e74c3c' : '#27ae60';
-            toast.classList.add('show');
-            
+        function showToast(message, isError = false) {
+            toastMessage.textContent = message;
+            toast.className = toast.className.replace(/bg-\w+-\d+/, isError ? 'bg-red-500' : 'bg-green-500');
+            toast.classList.remove('opacity-0', 'translate-y-10');
             setTimeout(() => {
-                toast.classList.remove('show');
+                toast.classList.add('opacity-0', 'translate-y-10');
             }, 3000);
         }
 
-        // Close modal when clicking outside
-        document.getElementById('editModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeEditModal();
+        function showConfirmModal(title, message, onConfirm) {
+            document.getElementById('confirm-title').textContent = title;
+            document.getElementById('confirm-message').textContent = message;
+            confirmCallback = onConfirm;
+            confirmModal.classList.remove('hidden');
+        }
+
+        // --- UI Rendering ---
+        function renderServices() {
+            servicesGrid.innerHTML = '';
+            const visibleServices = predefinedServices.filter(s => !hiddenServices.includes(s.name));
+            allServices = [...visibleServices, ...customServices].sort((a, b) => a.name.localeCompare(b.name));
+            
+            allServices.forEach(service => {
+                const isCustom = customServices.some(cs => cs.name === service.name);
+                const serviceEl = document.createElement('div');
+                serviceEl.className = 'relative bg-gray-800 p-4 rounded-xl flex flex-col items-center justify-center aspect-square cursor-pointer hover:bg-gray-700 hover:scale-105 transition-transform duration-200 border border-gray-700';
+                serviceEl.dataset.service = service.name;
+                serviceEl.innerHTML = `
+                    <div class="icon-container flex items-center justify-center text-4xl ${service.color}">
+                        <i class="${service.icon}"></i>
+                    </div>
+                    <span class="mt-3 text-center font-semibold text-sm">${service.name}</span>
+                    <button class="manage-btn" data-action="${isCustom ? 'delete' : 'hide'}" title="${isCustom ? 'Delete' : 'Hide'}">
+                        <i class="fas ${isCustom ? 'fa-trash' : 'fa-eye-slash'}"></i>
+                    </button>
+                `;
+                serviceEl.querySelector('.icon-container, .mt-3').addEventListener('click', () => {
+                    if (!isEditMode) openPasswordModal(service);
+                });
+                serviceEl.querySelector('.manage-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (isCustom) {
+                        showConfirmModal('Delete Service?', `This will permanently delete '${service.name}' and its saved password.`, () => deleteCustomService(service.name));
+                    } else {
+                        hideService(service.name);
+                    }
+                });
+                servicesGrid.appendChild(serviceEl);
+            });
+            listenForPasswordUpdates();
+        }
+
+        // --- Authentication and Data Handling ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                const masterPassRef = doc(db, `artifacts/${appId}/users/${userId}/master/password`);
+                const docSnap = await getDoc(masterPassRef);
+                if (docSnap.exists()) {
+                    masterPasswordHash = docSnap.data().hash;
+                    loginPrompt.textContent = 'Enter your master password to unlock.';
+                } else {
+                    masterPasswordHash = null;
+                    loginPrompt.textContent = 'Create a master password to secure your vault.';
+                }
+                loginOverlay.classList.remove('opacity-0');
+            } else {
+                 if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                 } else {
+                    await signInAnonymously(auth);
+                 }
             }
         });
+        
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const password = masterPasswordInput.value;
+            if (!password) { loginError.textContent = 'Password cannot be empty.'; return; }
+            loginError.textContent = '';
+            const currentHash = await hashPassword(password);
+            if (masterPasswordHash) {
+                if (currentHash === masterPasswordHash) await initializeAppUI();
+                else loginError.textContent = 'Incorrect master password.';
+            } else {
+                const masterPassRef = doc(db, `artifacts/${appId}/users/${userId}/master/password`);
+                await setDoc(masterPassRef, { hash: currentHash });
+                masterPasswordHash = currentHash;
+                await initializeAppUI();
+            }
+        });
+        
+        async function loadUserData() {
+            const customServicesRef = doc(db, `artifacts/${appId}/users/${userId}/custom/services`);
+            const hiddenServicesRef = doc(db, `artifacts/${appId}/users/${userId}/settings/hidden`);
+            const [customSnap, hiddenSnap] = await Promise.all([getDoc(customServicesRef), getDoc(hiddenServicesRef)]);
+            customServices = customSnap.exists() ? customSnap.data().list : [];
+            hiddenServices = hiddenSnap.exists() ? hiddenSnap.data().list : [];
+        }
 
-        // Initialize the app
-        initializeApp();
+        async function initializeAppUI() {
+            loginOverlay.classList.add('opacity-0');
+            setTimeout(() => loginOverlay.classList.add('hidden'), 300);
+            appContainer.classList.remove('hidden');
+            await loadUserData();
+            renderServices();
+        }
+
+        function listenForPasswordUpdates() {
+            if (unsubscribePasswords) unsubscribePasswords();
+            const passwordsColRef = collection(db, `artifacts/${appId}/users/${userId}/passwords`);
+            unsubscribePasswords = onSnapshot(passwordsColRef, (snapshot) => {
+                document.querySelectorAll('[data-service]').forEach(el => el.classList.remove('has-password'));
+                snapshot.docs.forEach(doc => {
+                    const serviceEl = servicesGrid.querySelector(`[data-service="${doc.id}"]`);
+                    if (serviceEl) serviceEl.classList.add('has-password');
+                });
+            });
+        }
+        
+        logoutButton.addEventListener('click', () => {
+            if (unsubscribePasswords) unsubscribePasswords();
+            // Reset state
+            Object.assign(window, { userId: null, masterPasswordHash: null, customServices: [], hiddenServices: [], allServices: [], isEditMode: false });
+            masterPasswordInput.value = '';
+            appContainer.classList.add('hidden');
+            loginOverlay.classList.remove('hidden', 'opacity-0');
+            servicesGrid.classList.remove('edit-mode');
+            editModeControls.classList.add('hidden');
+        });
+
+        // --- Service Management (Hide/Delete/Restore) ---
+        async function saveHiddenServices() {
+            const hiddenServicesRef = doc(db, `artifacts/${appId}/users/${userId}/settings/hidden`);
+            await setDoc(hiddenServicesRef, { list: hiddenServices });
+        }
+        
+        async function saveCustomServices() {
+            const customServicesRef = doc(db, `artifacts/${appId}/users/${userId}/custom/services`);
+            await setDoc(customServicesRef, { list: customServices });
+        }
+
+        async function hideService(serviceName) {
+            if (!hiddenServices.includes(serviceName)) {
+                hiddenServices.push(serviceName);
+                await saveHiddenServices();
+                renderServices();
+                showToast(`'${serviceName}' has been hidden.`);
+            }
+        }
+
+        async function deleteCustomService(serviceName) {
+            customServices = customServices.filter(s => s.name !== serviceName);
+            const passwordRef = doc(db, `artifacts/${appId}/users/${userId}/passwords/${serviceName}`);
+            await Promise.all([saveCustomServices(), deleteDoc(passwordRef)]);
+            renderServices();
+            showToast(`'${serviceName}' has been deleted.`, true);
+        }
+        
+        async function restoreService(serviceName) {
+            hiddenServices = hiddenServices.filter(s => s.name !== serviceName);
+            await saveHiddenServices();
+            renderServices();
+            renderHiddenServicesList(); // Update the modal list
+            showToast(`'${serviceName}' has been restored.`);
+            if (hiddenServices.length === 0) hiddenServicesModal.classList.add('hidden');
+        }
+
+        function renderHiddenServicesList() {
+            hiddenServicesList.innerHTML = '';
+            if (hiddenServices.length === 0) {
+                hiddenServicesList.innerHTML = `<p class="text-gray-400 text-center">No services are hidden.</p>`;
+                return;
+            }
+            hiddenServices.sort().forEach(serviceName => {
+                const service = predefinedServices.find(s => s.name === serviceName);
+                if (!service) return;
+                const itemEl = document.createElement('div');
+                itemEl.className = 'flex items-center justify-between bg-gray-700 p-3 rounded-lg';
+                itemEl.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="${service.icon} ${service.color} text-xl"></i>
+                        <span class="font-medium">${service.name}</span>
+                    </div>
+                    <button class="restore-btn bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-md text-sm" data-service="${service.name}">Restore</button>
+                `;
+                hiddenServicesList.appendChild(itemEl);
+            });
+        }
+        
+        // --- Event Listeners ---
+        manageToggleBtn.addEventListener('click', () => {
+            isEditMode = !isEditMode;
+            servicesGrid.classList.toggle('edit-mode');
+            editModeControls.classList.toggle('hidden');
+            manageToggleBtn.classList.toggle('bg-indigo-600');
+            manageToggleBtn.classList.toggle('bg-gray-600');
+            addServiceFab.classList.toggle('hidden');
+        });
+
+        showHiddenBtn.addEventListener('click', () => {
+            renderHiddenServicesList();
+            hiddenServicesModal.classList.remove('hidden');
+        });
+
+        closeHiddenModal.addEventListener('click', () => hiddenServicesModal.classList.add('hidden'));
+
+        hiddenServicesList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('restore-btn')) {
+                restoreService(e.target.dataset.service);
+            }
+        });
+        
+        // Confirm Modal Listeners
+        document.getElementById('confirm-cancel').addEventListener('click', () => confirmModal.classList.add('hidden'));
+        document.getElementById('confirm-proceed').addEventListener('click', () => {
+            if (confirmCallback) confirmCallback();
+            confirmModal.classList.add('hidden');
+            confirmCallback = null;
+        });
+
+        // Add other event listeners from initModals() that need access to wider scope
+        // This is a bit messy, ideally would refactor into a class or better module structure
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('#add-service-fab')) {
+                addServiceModal.classList.remove('hidden');
+            }
+        });
+        
+        // Re-delegate events after init
+        document.addEventListener('submit', async (e) => {
+            if (e.target.id === 'password-form') {
+                e.preventDefault();
+                const serviceName = e.target.querySelector('#service-name').value;
+                const username = e.target.querySelector('#username').value;
+                const password = e.target.querySelector('#password').value;
+                const passRef = doc(db, `artifacts/${appId}/users/${userId}/passwords/${serviceName}`);
+                await setDoc(passRef, { username, password });
+                showToast(`${serviceName} password saved successfully!`);
+                passwordModal.classList.add('hidden');
+            } else if (e.target.id === 'add-service-form') {
+                e.preventDefault();
+                const name = e.target.querySelector('#new-service-name').value.trim();
+                const icon = e.target.querySelector('#new-service-icon').value.trim();
+                const color = e.target.querySelector('#new-service-color').value.trim();
+
+                if (!name || !icon || !color) { showToast('All fields are required.', true); return; }
+                if ([...predefinedServices, ...customServices].some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                    showToast(`Service "${name}" already exists.`, true); return;
+                }
+                const newService = { name, icon, color };
+                customServices.push(newService);
+                await saveCustomServices();
+                renderServices();
+                e.target.reset();
+                addServiceModal.classList.add('hidden');
+                showToast(`Service "${name}" added successfully!`);
+            }
+        });
+        
+        async function openPasswordModal(service) {
+            passwordModal.classList.remove('hidden');
+            const form = passwordModal.querySelector('#password-form');
+            form.reset();
+            passwordModal.querySelector('#delete-password').classList.add('hidden');
+            passwordModal.querySelector('#modal-icon-container').innerHTML = `<i class="${service.icon} ${service.color}"></i>`;
+            passwordModal.querySelector('#modal-title').textContent = `Manage ${service.name}`;
+            form.querySelector('#service-name').value = service.name;
+
+            const passRef = doc(db, `artifacts/${appId}/users/${userId}/passwords/${service.name}`);
+            const docSnap = await getDoc(passRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                form.querySelector('#username').value = data.username;
+                form.querySelector('#password').value = data.password;
+                passwordModal.querySelector('#delete-password').classList.remove('hidden');
+            }
+        }
+        
     </script>
 </body>
 </html>
+
